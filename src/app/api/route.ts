@@ -41,7 +41,6 @@ async function deleteFile(theFilename: any) {
 async function getJson(code: any) {
   try {
     const { version, title, fullPath } = code;
-    console.log({ version, title, fullPath });
     const urlToExtract = `https://www.ecfr.gov/api/renderer/v1/content/enhanced/${version}/title-${title}?${fullPath}`;
     const data = await webScraper(urlToExtract, "csv");
     return data;

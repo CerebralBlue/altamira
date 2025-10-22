@@ -11,7 +11,7 @@ const ModalCompareResults = () => {
 
   const download = async () => {
     try {
-      const response = await axios.post('http://localhost:3001/excel', { results: results.results }, {
+      const response = await axios.post('/api/scraper', { results: results.results }, {
         responseType: 'blob'
       });
 

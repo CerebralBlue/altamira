@@ -9,3 +9,4 @@ README.md
 !.next/standalone/
 .git
 .github/
+.env

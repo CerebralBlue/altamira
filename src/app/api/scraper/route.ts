@@ -1,4 +1,4 @@
-import { webScraper } from '@/lib/scraper';
+import { getExcelResults, webScraper } from '@/lib/scraper';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
@@ -25,7 +25,31 @@ export async function GET(req: NextRequest) {
     );
     return res;
   } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: 'There was an error while trying to get ' }, { status: 500 });
+    return NextResponse.json({ error: `There was an error while trying to get the Federal CSV Summary. Error: ${err}` }, { status: 500 });
+  }
+}
+
+
+export async function POST(req: NextRequest) {
+  try {
+    const { results } = await req.json();
+    const newResults = results.map((e: any) => {
+      return {
+        codeRef: e.lineItem.codeRef,
+        paragraphTitle: e.lineItem.paragraphTitle,
+        codeText: e.lineItem.codeText,
+        sectionManual: e.description,
+        snippet: e.snippet,
+        comments: "",
+      };
+    });
+
+    const dataBuffer = await getExcelResults(newResults);
+    const res = new NextResponse(dataBuffer);
+    res.headers.set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    res.headers.set("Content-Disposition", `attachment; filename="REPORT.xlsx"`);
+    return res;
+  } catch (err) {
+    return NextResponse.json({ error: `There was an error while trying to get the CSV comparison result file. Error: ${err}` }, { status: 500 });
   }
 }
